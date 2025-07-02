@@ -36,7 +36,10 @@ jobs:
         # 가장 최신 태그 가져오기 (없으면 기본값)
         TAG=$(gcloud artifacts docker images list asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/ay-repo/web \
           --format="value(TAGS)" --limit=10 | grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]{8}' | sort -V | tail -n 1 || echo "1.0.0-${DATE}")
-        
+          
+        if [[ -z "$TAG" ]]; then
+          TAG="1.0.0-${DATE}"
+        fi
         echo "Latest tag: $TAG"
 
         # semantic part 추출 (예: 1.0.2-20250629 → 1.0.2)
@@ -44,6 +47,11 @@ jobs:
         MAJOR=$(echo $SEMVER | cut -d '.' -f1)
         MINOR=$(echo $SEMVER | cut -d '.' -f2)
         PATCH=$(echo $SEMVER | cut -d '.' -f3)
+
+        # 비어 있으면 0으로 초기화
+        MAJOR=${MAJOR:-0}
+        MINOR=${MINOR:-0}
+        PATCH=${PATCH:-0}
 
         # 버전 증가
         NEXT_PATCH=$((PATCH + 1))
