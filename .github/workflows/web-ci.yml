@@ -33,11 +33,10 @@ jobs:
         # 오늘 날짜
         DATE=$(date +%Y%m%d)
         
-        LTAG=$(gcloud artifacts docker tags list ${REPO_PATH} \
+        LTAG=$(gcloud artifacts docker tags list "asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/ay-repo"/web \
         --format="value(tag)" \
         --filter="tag ~ '^[0-9]+\.[0-9]+\.[0-9]+-[0-9]{8}$'" \
-        --sort-by="~tag" \ 
-        --limit=1 )
+        --sort-by="~tag" --limit=1 )
 
         if [[ -z "$LTAG" ]]; then
           TAG="1.0.0-${DATE}"
